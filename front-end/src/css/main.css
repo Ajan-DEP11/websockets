@@ -9,7 +9,6 @@ main {
 
 #output {
     height: calc(100vh - 200px);
-    border: 1px solid black;
     margin-bottom: 10px;
     overflow-x: hidden;
     overflow-y: auto;

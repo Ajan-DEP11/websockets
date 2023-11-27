@@ -26,6 +26,7 @@ btnSendElm.addEventListener('click', ()=> {
 
 function addChatMessageRecord(message){
     const messageElm = document.createElement('div');
+    messageElm.classList.add('alert', 'alert-primary')
     outputElm.append(messageElm);
     messageElm.innerText = message;
 }

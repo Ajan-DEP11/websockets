@@ -16,6 +16,7 @@ btnSendElm.addEventListener('click', ()=> {
     }).then(res => {
         if (res.ok){
             addChatMessageRecord(message);
+            outputElm.scrollTo(0, outputElm.scrollHeight);
             txtMessageElm.value = '';
             txtMessageElm.focus();
         }else{
@@ -26,7 +27,7 @@ btnSendElm.addEventListener('click', ()=> {
 
 function addChatMessageRecord(message){
     const messageElm = document.createElement('div');
-    messageElm.classList.add('alert', 'alert-primary')
+    messageElm.classList.add('message', 'others')
     outputElm.append(messageElm);
     messageElm.innerText = message;
 }
@@ -41,4 +42,6 @@ function loadChatMessages(){
     .catch(err => console.log(err));
 }
 
-setInterval(loadChatMessages, 1000);
+// setInterval(loadChatMessages, 5000);
+
+loadChatMessages();

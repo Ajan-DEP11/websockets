@@ -12,14 +12,16 @@
     <link rel="stylesheet" href="css/main.css">
     <script type="module" src="js/main.js"></script>
 </head>
-<body>
+<body class="d-flex flex-column vh-100">
     <header class="p-2 text-center border-bottom">
         <h2>Chat App</h2>
-        <h4>WebSockets in Action</h4>
+        <h4 class="m-0">WebSockets in Action</h4>
     </header>
-    <main>
-        <div class="border rounded p-2" id="output"></div>
-        <form action="javascript:void(0)" class="d-flex gap-2">
+    <main class="flex-grow-1 d-flex flex-column">
+        <div id="output-wrapper" class="border flex-grow-1 pb-2">
+            <div id="output" class="p-2 h-100"></div>
+        </div>
+        <form action="javascript:void(0)" class="border-top d-flex gap-2 p-2">
             <input class="form-control" id="txt-message" type="text" placeholder="Eg. Hello Guys!">
             <button class="btn btn-primary" id="btn-send">Send</button>
         </form>

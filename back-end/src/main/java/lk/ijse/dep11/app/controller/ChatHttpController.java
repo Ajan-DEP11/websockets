@@ -13,9 +13,8 @@ import java.util.Map;
 import java.util.Vector;
 
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/v1/messages")
 @CrossOrigin
-@Validated
 public class ChatHttpController {
 
     private final List<String> chatMessages = new Vector<>();
@@ -35,10 +34,11 @@ public class ChatHttpController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public Map<String, String> sendMessage(@RequestBody
-                                           Map<@Pattern(regexp = "^message$", message = "Invalid chat message") String,
-                                                   @NotBlank(message = "Chat message can't be empty") String>
-                                                   messageObj) {
+    @Validated
+    public Map<String, String> sendMessage(@RequestBody  Map<
+            @Pattern(regexp = "^message$", message = "Invalid chat message") String,
+            @NotBlank(message = "Chat message can't be empty") String>  messageObj) {
+
         chatMessages.add(messageObj.get("message"));
         return messageObj;
     }

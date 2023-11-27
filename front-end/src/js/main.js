@@ -11,11 +11,12 @@ const accountElm = document.querySelector("#account");
 const userNameElm = document.querySelector("#user-name");
 const userEmailElm = document.querySelector("#user-email");
 const btnSignOutElm = document.querySelector("#btn-sign-out");
+const loaderElm = document.querySelector("#loader");
 const { API_BASE_URL } = process.env;
 const user = {
-    email: '',
-    name: '',
-    picture: ''
+    email: null,
+    name: null,
+    picture: null
 };
 
 accountElm.addEventListener('click', (e)=> {
@@ -37,6 +38,7 @@ btnSignOutElm.addEventListener('click', (e)=> {
 });
 
 onAuthStateChanged(auth, (loggedUser) => {
+    loaderElm.classList.add('d-none');
     if (loggedUser){
         user.email = loggedUser.email;
         user.name = loggedUser.displayName;
@@ -44,6 +46,9 @@ onAuthStateChanged(auth, (loggedUser) => {
         finalizeLogin();
         loginOverlayElm.classList.add('d-none');
     } else{
+        user.email = null;
+        user.name = null;
+        user.picture = null;
         loginOverlayElm.classList.remove('d-none');
     }
 });
@@ -69,15 +74,20 @@ btnSendElm.addEventListener('click', () => {
     const message = txtMessageElm.value.trim();
     if (!message) return;
 
+    const msgObj = { 
+        message,
+        email: user.email
+    };
+
     fetch(`${API_BASE_URL}/messages`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify(msgObj)
     }).then(res => {
         if (res.ok) {
-            addChatMessageRecord(message);
+            addChatMessageRecord(msgObj);
             outputElm.scrollTo(0, outputElm.scrollHeight);
             txtMessageElm.value = '';
             txtMessageElm.focus();
@@ -87,9 +97,14 @@ btnSendElm.addEventListener('click', () => {
     }).catch(err => alert("Failed to connect with the server, please check the connection."));
 });
 
-function addChatMessageRecord(message) {
+function addChatMessageRecord({message, email}) {
     const messageElm = document.createElement('div');
-    messageElm.classList.add('message', 'me')
+    messageElm.classList.add('message')
+    if (email === user.email){
+        messageElm.classList.add('me');
+    }else{
+        messageElm.classList.add('others');
+    }
     outputElm.append(messageElm);
     messageElm.innerText = message;
 }
@@ -104,7 +119,7 @@ function loadChatMessages() {
         .catch(err => console.log(err));
 }
 
-// setInterval(loadChatMessages, 1000);
+setInterval(loadChatMessages, 1000);
 
 loadChatMessages();
 

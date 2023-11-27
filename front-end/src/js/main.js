@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth } from '../firebase.js';
 
 const provider = new GoogleAuthProvider();
@@ -8,6 +8,9 @@ const btnSignInElm = document.querySelector("#btn-sign-in");
 const outputElm = document.querySelector("#output");
 const loginOverlayElm = document.querySelector("#login-overlay");
 const accountElm = document.querySelector("#account");
+const userNameElm = document.querySelector("#user-name");
+const userEmailElm = document.querySelector("#user-email");
+const btnSignOutElm = document.querySelector("#btn-sign-out");
 const { API_BASE_URL } = process.env;
 const user = {
     email: '',
@@ -15,13 +18,33 @@ const user = {
     picture: ''
 };
 
+accountElm.addEventListener('click', (e)=> {
+    accountElm.querySelector("#account-details")
+        .classList.remove('d-none');
+    e.stopPropagation();
+});
+
+document.addEventListener('click', ()=> {
+    accountElm.querySelector("#account-details")
+        .classList.add('d-none');
+});
+
+btnSignOutElm.addEventListener('click', (e)=> {
+    accountElm.querySelector("#account-details")
+        .classList.add('d-none');
+    e.stopPropagation();
+    signOut(auth);
+});
+
 onAuthStateChanged(auth, (loggedUser) => {
     if (loggedUser){
         user.email = loggedUser.email;
-        user.name = loggedUser.name;
+        user.name = loggedUser.displayName;
         user.picture = loggedUser.photoURL;
         finalizeLogin();
         loginOverlayElm.classList.add('d-none');
+    } else{
+        loginOverlayElm.classList.remove('d-none');
     }
 });
 
@@ -37,7 +60,8 @@ btnSignInElm.addEventListener('click', () => {
 });
 
 function finalizeLogin(){
-    console.log(user.picture);
+    userNameElm.innerText = user.name;
+    userEmailElm.innerText = user.email;
     accountElm.style.backgroundImage = `url(${user.picture})`;
 }
 
@@ -65,7 +89,7 @@ btnSendElm.addEventListener('click', () => {
 
 function addChatMessageRecord(message) {
     const messageElm = document.createElement('div');
-    messageElm.classList.add('message', 'others')
+    messageElm.classList.add('message', 'me')
     outputElm.append(messageElm);
     messageElm.innerText = message;
 }

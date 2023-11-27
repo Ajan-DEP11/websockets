@@ -89,13 +89,13 @@ main, #output-wrapper {
 #account-details {
     position: absolute;
     width: 200px;
-    height: 100px;
     right: 0;
     top: calc(100% + 2px);
     background-color: white;
     border: 1px solid lightgray;
     border-radius: 10px;
     text-align: right;
+    z-index: 99999;
 }
 
 #user-email {

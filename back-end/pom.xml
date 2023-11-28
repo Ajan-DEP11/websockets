@@ -7,7 +7,7 @@
     <groupId>lk.ijse.dep11</groupId>
     <artifactId>back-end</artifactId>
     <version>1.0.0</version>
-    <description>websockets-back-end</description>
+    <description>chat-app-back-end</description>
     <packaging>war</packaging>
 
     <properties>

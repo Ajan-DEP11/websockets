@@ -14,16 +14,15 @@ import javax.validation.ConstraintViolation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 public class ChatWSController extends TextWebSocketHandler {
 
-//    private final List<MessageTO> chatMessage = new Vector<>();
+    private final List<WebSocketSession> webSocketSessionList = new ArrayList<>();
+    //    private final List<MessageTO> chatMessage = new Vector<>();
     @Autowired
     private ObjectMapper mapper;
     @Autowired
     private LocalValidatorFactoryBean validatorFactoryBean;
-    private final List<WebSocketSession> webSocketSessionList = new ArrayList<>();
 
     public ChatWSController(/* ObjectMapper objectMapper */) {
         /* this.objectMapper = objectMapper; */
@@ -54,7 +53,7 @@ public class ChatWSController extends TextWebSocketHandler {
                 // Then let's broadcast this message to other clients expect this (session) client
                 for (WebSocketSession webSocketSession : webSocketSessionList) {
                     if (webSocketSession == session) continue;
-                    if (webSocketSession.isOpen()){
+                    if (webSocketSession.isOpen()) {
                         webSocketSession.sendMessage(new TextMessage(message.getPayload()));
                     }
                 }

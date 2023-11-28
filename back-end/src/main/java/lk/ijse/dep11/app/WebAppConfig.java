@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @ComponentScan
 @Configuration
-//@PropertySource("classpath:/application.properties")
 public class WebAppConfig {
 
     @Bean

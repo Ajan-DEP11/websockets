@@ -32,8 +32,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWSController(), "/api/v3/messages");
+        registry.addHandler(chatWSController(), "/api/v3/messages")
+                .setAllowedOriginPatterns("*");
     }
-
 
 }

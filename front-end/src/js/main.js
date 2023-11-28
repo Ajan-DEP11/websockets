@@ -18,6 +18,7 @@ const user = {
     name: null,
     picture: null
 };
+let ws = null;
 
 accountElm.addEventListener('click', (e)=> {
     accountElm.querySelector("#account-details")
@@ -45,11 +46,22 @@ onAuthStateChanged(auth, (loggedUser) => {
         user.picture = loggedUser.photoURL;
         finalizeLogin();
         loginOverlayElm.classList.add('d-none');
+        if (!ws){
+            ws = new WebSocket(`${API_BASE_URL}/messages`);
+            ws.addEventListener('message', loadNewChatMessages);
+            ws.addEventListener('error', ()=>{
+                alert("Connection failure, try refreshing the application");
+            });
+        }
     } else{
         user.email = null;
         user.name = null;
         user.picture = null;
         loginOverlayElm.classList.remove('d-none');
+        if (ws){
+            ws.close();
+            ws = null;
+        } 
     }
 });
 
@@ -79,22 +91,28 @@ btnSendElm.addEventListener('click', () => {
         email: user.email
     };
 
-    fetch(`${API_BASE_URL}/messages`, {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(msgObj)
-    }).then(res => {
-        if (res.ok) {
-            addChatMessageRecord(msgObj);
-            outputElm.scrollTo(0, outputElm.scrollHeight);
-            txtMessageElm.value = '';
-            txtMessageElm.focus();
-        } else {
-            alert("Failed to send the chat message, please try again.");
-        }
-    }).catch(err => alert("Failed to connect with the server, please check the connection."));
+    ws.send(JSON.stringify(msgObj));
+    addChatMessageRecord(msgObj);
+    outputElm.scrollTo(0, outputElm.scrollHeight);
+    txtMessageElm.value = '';
+    txtMessageElm.focus();
+
+    // fetch(`${API_BASE_URL}/messages`, {
+    //     method: 'POST',
+    //     headers: {
+    //         "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify(msgObj)
+    // }).then(res => {
+    //     if (res.ok) {
+    //         addChatMessageRecord(msgObj);
+    //         outputElm.scrollTo(0, outputElm.scrollHeight);
+    //         txtMessageElm.value = '';
+    //         txtMessageElm.focus();
+    //     } else {
+    //         alert("Failed to send the chat message, please try again.");
+    //     }
+    // }).catch(err => alert("Failed to connect with the server, please check the connection."));
 });
 
 function addChatMessageRecord({message, email}) {
@@ -109,17 +127,21 @@ function addChatMessageRecord({message, email}) {
     messageElm.innerText = message;
 }
 
-function loadChatMessages() {
-    fetch(`${API_BASE_URL}/messages`)
-        .then(req => req.json())
-        .then(chatMessages => {
-            Array.from(outputElm.children).forEach(child => child.remove());
-            chatMessages.forEach(msg => addChatMessageRecord(msg))
-        })
-        .catch(err => console.log(err));
+// function loadChatMessages() {
+//     fetch(`${API_BASE_URL}/messages`)
+//         .then(req => req.json())
+//         .then(chatMessages => {
+//             Array.from(outputElm.children).forEach(child => child.remove());
+//             chatMessages.forEach(msg => addChatMessageRecord(msg))
+//         })
+//         .catch(err => console.log(err));
+// }
+
+// setInterval(loadChatMessages, 1000);
+
+// loadChatMessages();
+
+function loadNewChatMessages(e){
+    const msg = JSON.parse(e.data);
+    addChatMessageRecord(msg);
 }
-
-setInterval(loadChatMessages, 1000);
-
-loadChatMessages();
-
